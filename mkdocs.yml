@@ -57,41 +57,13 @@ theme:
 
 plugins:
   - search
-  - mkdocstrings:
-      handlers:
-        python:
-          paths: [src]
-          import:
-            - https://docs.python.org/3/objects.inv
-            - https://mkdocstrings.github.io/objects.inv
-            - https://mkdocstrings.github.io/autorefs/objects.inv
-            - https://mkdocstrings.github.io/griffe/objects.inv
-            - https://python-markdown.github.io/objects.inv
-          options:
-            docstring_options:
-              ignore_init_summary: true
-            docstring_section_style: spacy
-            show_if_no_docstring: true
-            filters: ["!^_"]
-            heading_level: 1
-            inherited_members: true
-            merge_init_into_class: true
-            parameter_headings: true
-            relative_crossrefs: true
-            scoped_crossrefs: true
-            separate_signature: true
-            show_bases: false
-            show_inheritance_diagram: true
-            show_root_heading: true
-            show_root_full_path: false
-            show_signature_annotations: true
-            show_source: false
-            show_symbol_type_heading: true
-            show_symbol_type_toc: true
-            signature_crossrefs: true
-            summary: true
-            unwrap_annotated: false
-            allow_introspection: false
+  - mkdocs-about:
+      username: cooperellidge
+      header: This library was created by Cooper Ellidge. Here are some of my other projects.
+      related:
+        - config-getter
+      exclude:
+        - resume
 
 markdown_extensions:
   - admonition
