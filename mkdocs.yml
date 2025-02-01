@@ -60,10 +60,9 @@ plugins:
   - mkdocs-about:
       username: cooperellidge
       header: This library was created by Cooper Ellidge. Here are some of my other projects.
-      related:
-        - config-getter
       exclude:
         - resume
+        - slow-api
 
 markdown_extensions:
   - admonition

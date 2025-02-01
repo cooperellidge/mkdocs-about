@@ -1,7 +1,7 @@
 [project]
 name = "mkdocs-about"
 version = "0.0.1"
-description = "Generate an About page for MkDocs"
+description = "Generate an About page for MkDocs based on GitHub repos"
 readme = "README.md"
 authors = [{ name = "Cooper Ellidge", email = "cooper.ellidge@gmail.com" }]
 requires-python = ">=3.10"
