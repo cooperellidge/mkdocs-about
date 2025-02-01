@@ -1,5 +1,6 @@
 # ruff: noqa: D101, D103
 import logging
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -8,6 +9,7 @@ from jinja2 import Environment, FileSystemLoader, Template
 from mkdocs.config import config_options as c
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import BasePlugin
+from mkdocs.structure.files import File, Files
 
 from mkdocs_about.template import DEFAULT_TEMPLATE
 
@@ -31,7 +33,11 @@ class Repo:
 
 
 class AboutPagePlugin(BasePlugin[AboutPageConfig]):
-    def on_pre_build(self, config: MkDocsConfig) -> None:  # noqa: D102
+    def __init__(self) -> None:  # noqa: D107
+        super().__init__()
+        self._tmp_path: Path | None = None
+
+    def on_files(self, files: Files, /, *, config: MkDocsConfig) -> None:  # noqa: D102
         current_project = get_current_project_name(
             repo_url=config.repo_url,
         )
@@ -51,13 +57,29 @@ class AboutPagePlugin(BasePlugin[AboutPageConfig]):
             other_projects=other_projects,
         )
 
-        output = Path("docs/about.md")
+        tmp_dir = Path.cwd() / "tmp"
+        tmp_dir.mkdir(parents=True, exist_ok=True)
 
-        if output.exists():
-            log.warning("`%s already exists. Overwriting", output)
+        self._tmp_path = tmp_dir / "about.md"
 
-        with output.open("w", encoding="utf-8") as f:
+        log.info("Writing to %s", self._tmp_path)
+        with self._tmp_path.open("w", encoding="utf-8") as f:
             f.write(content)
+
+        files.append(
+            File(
+                path="about.md",
+                src_dir=str(tmp_dir),
+                dest_dir="out",
+                use_directory_urls=config.use_directory_urls,
+            )
+        )
+
+    def on_post_build(self, *, config: MkDocsConfig) -> None:  # noqa: ARG002, D102
+        if self._tmp_path and self._tmp_path.exists():
+            log.info("Unlinking %s", self._tmp_path)
+            self._tmp_path.unlink()
+            (Path.cwd() / "tmp").rmdir()
 
 
 def exlcude_repos(exclude: list[str], repos: list[Repo]) -> list[Repo]:
