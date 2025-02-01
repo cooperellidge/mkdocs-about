@@ -1,0 +1,7 @@
+{
+  "autoDocstring.docstringFormat": "google-notypes",
+  "editor.formatOnSave": true,
+  "[python]": {
+      "editor.rulers": [88]
+  }
+}

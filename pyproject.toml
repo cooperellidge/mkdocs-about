@@ -1,0 +1,40 @@
+[project]
+name = "mkdocs-about"
+version = "0.0.1"
+description = "Generate an About page for MkDocs"
+readme = "README.md"
+authors = [{ name = "Cooper Ellidge", email = "cooper.ellidge@gmail.com" }]
+requires-python = ">=3.10"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812", # Avoid conflict with formatter
+    "D100",   # Package level docstrings are a bit weird
+    "D104",   # Module level docstrings are a bit weird
+    "D105",   # Docstrings on dunder methods are a bit weird
+    "TD",     # I like todos
+    "FIX002", # I still like todos
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "D",    # Test names should be clear, with docstring being optional
+    "S101", # Asserts are needed for tests
+]
+
+[dependency-groups]
+docs = ["mkdocs-material>=9.6.1"]
+dev = ["mypy>=1.14.1", "ruff>=0.9.4"]
