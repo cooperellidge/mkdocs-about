@@ -1,6 +1,5 @@
 # ruff: noqa: D101, D103
 import logging
-import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -33,10 +32,6 @@ class Repo:
 
 
 class AboutPagePlugin(BasePlugin[AboutPageConfig]):
-    def __init__(self) -> None:  # noqa: D107
-        super().__init__()
-        self._tmp_path: Path | None = None
-
     def on_files(self, files: Files, /, *, config: MkDocsConfig) -> None:  # noqa: D102
         current_project = get_current_project_name(
             repo_url=config.repo_url,
@@ -57,29 +52,7 @@ class AboutPagePlugin(BasePlugin[AboutPageConfig]):
             other_projects=other_projects,
         )
 
-        tmp_dir = Path.cwd() / "tmp"
-        tmp_dir.mkdir(parents=True, exist_ok=True)
-
-        self._tmp_path = tmp_dir / "about.md"
-
-        log.info("Writing to %s", self._tmp_path)
-        with self._tmp_path.open("w", encoding="utf-8") as f:
-            f.write(content)
-
-        files.append(
-            File(
-                path="about.md",
-                src_dir=str(tmp_dir),
-                dest_dir="out",
-                use_directory_urls=config.use_directory_urls,
-            )
-        )
-
-    def on_post_build(self, *, config: MkDocsConfig) -> None:  # noqa: ARG002, D102
-        if self._tmp_path and self._tmp_path.exists():
-            log.info("Unlinking %s", self._tmp_path)
-            self._tmp_path.unlink()
-            (Path.cwd() / "tmp").rmdir()
+        files.append(File.generated(config=config, src_uri="about.md", content=content))
 
 
 def exlcude_repos(exclude: list[str], repos: list[Repo]) -> list[Repo]:
